@@ -48,5 +48,13 @@
   "dependencies": {
     "node-fetch": "^3.3.2"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CacaoNk0027/nekoapi_package.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CacaoNk0027/nekoapi_package/issues"
+  },
+  "homepage": "https://github.com/CacaoNk0027/nekoapi_package#readme"
 }
