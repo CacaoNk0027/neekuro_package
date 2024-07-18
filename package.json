@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "nekoapi",
+  "version": "1.0.0",
+  "description": "Una biblioteca de imágenes con temática de anime para bots de Discord.",
+  "main": "sources/main/index.js",
+  "types": "sourceS/typings/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./sources/typings/index.d.ts",
+        "default": "./sources/main/index.js"
+      },
+      "require": {
+        "types": "./sources/typings/index.d.ts",
+        "default": "./sources/main/index.js"
+      }
+    }
+  },
+  "directories": {
+    "lib": "sources",
+    "test": "test"
+  },
+  "files": [
+    "sources"
+  ],
+  "contributors": [
+    "cacao0027 <kzmkuro@gmail.com>"
+  ],
+  "author": "cacao0027 <kzmkuro@gmail.com>",
+  "keywords": [
+    "anime",
+    "acción",
+    "gifs",
+    "imagenes",
+    "nsfw",
+    "sfw",
+    "discord",
+    "action",
+    "images"
+  ],
+  "license": "ISC",
+  "scripts": {
+    "test": "nodemon node ./test/main.test.js"
+  },
+  "engines": {
+    "node": ">=20.12.2"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
