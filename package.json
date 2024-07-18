@@ -18,7 +18,6 @@
     }
   },
   "directories": {
-    "lib": "sources",
     "test": "test"
   },
   "files": [
@@ -48,5 +47,6 @@
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
-  }
+  },
+  "devDependencies": {}
 }
