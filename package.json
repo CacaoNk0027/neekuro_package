@@ -21,7 +21,8 @@
     "test": "test"
   },
   "files": [
-    "sources"
+    "sources",
+    "README.md"
   ],
   "contributors": [
     "cacao0027 <kzmkuro@gmail.com>"
