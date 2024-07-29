@@ -4,6 +4,7 @@
  */
 
 const APIClient = require('../rest/APIClient');
+const NekoError = require('./errors/Error');
 const NekoGif = require('./package/NekoGif');
 const { getToken } = require('./user/BaseUser');
 
@@ -23,8 +24,8 @@ class SFW {
      * @returns {Promise<NekoGif>}
      */
     static async getGif(cat, gif) {
-        if (!cat) throw new NekoError('el parametro <cat> es requerido');
-        if (!gif) throw new NekoError('el parametro <gif> es requerido');
+        if (!cat) throw new NekoError('NoInput', 'el parametro <cat> es requerido');
+        if (!gif) throw new NekoError('NoInput', 'el parametro <gif> es requerido');
 
         let solicitud = new APIClient(base, { token: getToken() }), response = null;
         switch (cat) {

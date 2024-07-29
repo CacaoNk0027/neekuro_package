@@ -92,7 +92,7 @@ export class APIClient {
      * @param endpoint establece la ruta a la que se quiere comunicar en la api
      * @throws {APIError} solo si sucede un error entre solicitudes
      */
-    async get(endpoint: string): Promise<GifResponse>
+    public get(endpoint: string): Promise<GifResponse>
 }
 
 /**
@@ -170,7 +170,7 @@ export const SFW: {
      * // obtener anime
      * cuddle.getAnime(); 
      */
-    async getGif<T extends SfwCategories>(category: T, gif: GifMap[T]): Promise<NekoGif>
+    getGif<T extends SfwCategories>(category: T, gif: GifMap[T]): Promise<NekoGif>
 }
 
 //#region inferfaces
@@ -208,7 +208,32 @@ export interface APIClientData {
 export type ActionGifs =
     'cook' |
     'cuddle' |
-    'cure';
+    'cure' |
+    'draw' |
+    'drive' |
+    'eat' |
+    'explosion' |
+    'feed' |
+    'hug' |
+    'kickbut' |
+    'kill' |
+    'kiss' |
+    'lick'|
+    'pat' |
+    'peek' |
+    'playing' |
+    'poke' |
+    'punch' |
+    'run' |
+    'sape' |
+    'shoot' |
+    'sip'|
+    'slap' |
+    'sleep' |
+    'stare' |
+    'tickle' |
+    'travel' |
+    'work' ;
 
 export type ReactionGifs = 'scream';
 
