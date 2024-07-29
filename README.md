@@ -80,7 +80,7 @@ Finalmente te agradecemos tu preferencia y esperamos haber cumplido tus espectat
 
 ### que se tiene planeado?
 
-Principalmente terminaremos la categoria acción, reacción y anime para tener la primer subida a NPM de este paquete y asi finalmente tener terminada la categoria SFW. <br> Sin embargo una de las problematicas que se nos presentan son buscar los gifs para la API asi como sus animes <b>es un proceso lento...</b> y agobiante...
+Principalmente terminaremos la categoria acción y reacción para tener la primer subida a NPM de este paquete y asi finalmente tener terminada la categoria SFW. <br> Sin embargo una de las problematicas que se nos presentan son buscar los gifs para la API asi como sus animes <b>es un proceso lento...</b> y agobiante...
 <br>Por eso ahora mas que nunca queremos que nos apoyes en <b>NexaTDC</b>! Con el fin de poder dar al publico lo mas pronto posible los servicios que Maple Bot ofrece.
 
 <b><i>No es para mi, es para la comunidad... Si no es para la comunidad, no es para nadie...</i></b>
