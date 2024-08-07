@@ -235,6 +235,19 @@ export type ActionGifs =
     'travel' |
     'work' ;
 
-export type ReactionGifs = 'scream';
+export type ReactionGifs = 'angry' | 
+    'blush' |
+    'bored' |
+    'confused' |
+    'cry' |
+    'dance' |
+    'laugh' |
+    'like' | 
+    'pout' |
+    'scream' |
+    'smug' |
+    'think' |
+    'vomit' |
+    'wink';
 
 export type SfwCategories = 'action' | 'reaction';
