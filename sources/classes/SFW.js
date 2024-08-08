@@ -3,10 +3,10 @@
  * @typedef {import('../typings').GifMap} GifMap
  */
 
-const APIClient = require('../rest/APIClient');
-const NekoError = require('./errors/Error');
-const NekoGif = require('./package/NekoGif');
-const { getToken } = require('./user/BaseUser');
+const APIClient = require('../rest/apiclient');
+const NekoError = require('./errors/error');
+const NekoGif = require('./package/nekogif');
+const { getToken } = require('./user/baseuser');
 
 // url base de la api para SFW
 const base = 'https://nekoapi-0kp7.onrender.com/api/sfw'

@@ -3,7 +3,7 @@
   "name": "nekoapi",
   "version": "1.0.0-beta.2",
   "description": "Una biblioteca de imágenes con temática de anime para bots de Discord.",
-  "main": "sources/main/Index.js",
+  "main": "sources/main/index.js",
   "types": "sources/typings/index.d.ts",
   "exports": {
     ".": {

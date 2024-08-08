@@ -1,7 +1,7 @@
 'use strict';
 
-const { setToken } = require("./BaseUser");
-const NekoError = require('../errors/Error')
+const { setToken } = require("./baseuser");
+const NekoError = require('../errors/error')
 
 /**
  * Clase Usuario

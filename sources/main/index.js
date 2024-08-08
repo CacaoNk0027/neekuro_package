@@ -2,21 +2,21 @@
 
 //#region Clases
 
-exports.User = require('../classes/user/User')
+exports.User = require('../classes/user/user')
 
 // paquete
 
-exports.NekoGif = require('../classes/package/NekoGif')
-exports.BaseUser = require('../classes/user/BaseUser')
+exports.NekoGif = require('../classes/package/nekogif')
+exports.BaseUser = require('../classes/user/baseuser')
 
 // rest
 
-exports.APIClient = require('../rest/APIClient')
+exports.APIClient = require('../rest/apiclient')
 
 // errores
 
-exports.APIError = require('../classes/errors/APIError')
-exports.Error = require('../classes/errors/Error')
+exports.APIError = require('../classes/errors/apierror')
+exports.Error = require('../classes/errors/error')
 
 //#region "constantes"
 
