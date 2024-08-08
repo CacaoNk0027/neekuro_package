@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "nekoapi",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "Una biblioteca de imágenes con temática de anime para bots de Discord.",
   "main": "sources/main/index.js",
   "types": "sourceS/typings/index.d.ts",
