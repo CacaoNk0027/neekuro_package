@@ -9,7 +9,7 @@ const NekoGif = require('./package/NekoGif');
 const { getToken } = require('./user/BaseUser');
 
 // url base de la api para SFW
-const base = 'http://localhost:449/api/sfw'
+const base = 'https://nekoapi-0kp7.onrender.com/api/sfw'
 
 /**
  * Clase SFW
@@ -32,6 +32,11 @@ class SFW {
             case 'action':
                 response = solicitud.get('/action?gif=' + gif)
                 break;
+            case 'reaction':
+                response = solicitud.get('/reaction?gif=' + gif)
+                break;
+            default:
+                throw new NekoError('InvalidInput', 'la categoria que ingresas es invalida')
         }
         return new NekoGif(await response);
     }

@@ -47,9 +47,9 @@
     "node": ">=20.12.2"
   },
   "dependencies": {
+    "nekoapi": "file:",
     "node-fetch": "^3.3.2"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CacaoNk0027/nekoapi_package.git"

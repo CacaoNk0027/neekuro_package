@@ -8,6 +8,8 @@ NekoApi es una biblioteca de imágenes con temática de anime para bots de Disco
 
 Principalmente se creo con el fin de ser unicamente para <b>Maple Bot</b>. Sin embargo, desde que se decidio hacer a Maple de codigo publico, tambien se decidio que tanto su API como paquete fuesen libres.
 
+> notas: el paquete puede contener errores ya que se encuentra en fase beta, la API se hostea de manera gratuita por lo que las solicitudes no siempre pueden estar disponibles.
+
 ## Instalacion
 
 ```sh
