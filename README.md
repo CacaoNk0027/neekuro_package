@@ -18,7 +18,7 @@ npm install nekoapi
 
 ## Ejemplos
 
-NekoApi es un paquete que requiere de un token para llevar a cabo sus sollicitudes, por lo que requieres de ir a la [API Oficial]() para poder generar un token.
+NekoApi es un paquete que requiere de un token para llevar a cabo sus sollicitudes, por lo que requieres de ir a la [API Oficial](https://nekoapi-0kp7.onrender.com/) para poder generar un token.
 
 #### primeros pasos
 1 - Instanciamiento de usuario y establecimiento del token.<br>Este paso se requiere ya que con ello se establece globalmente el token por el paquete
