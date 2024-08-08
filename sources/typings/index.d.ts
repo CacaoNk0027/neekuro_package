@@ -26,7 +26,7 @@ export class User {
      * // recomendada (token oculto)
      * user.setToken(process.env['NekoApiToken']); 
      */
-    public setToken(token: string): void;
+    public token(token: string): void;
 }
 
 /**
