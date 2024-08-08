@@ -1,6 +1,13 @@
 <center> <h1>NekoApi</h1> </center>
 <center>de <b>Kmz Kuro</b> en nombre de <b>NexaTDC</b></center>
 <center>creada apartir de <b>cacao_nekoapi</b> y <b>nekoapi.beta</b> en npm.js</center>
+<br>
+<center>
+<img alt="NPM Version" src="https://img.shields.io/npm/v/nekoapi?logo=npm&style=flat&color=0d8973">
+<img alt="Downloads" src="https://img.shields.io/npm/dw/nekoapi?style=flat&color=bf9308&label=Descargas">
+<img alt="Typescript" src="https://img.shields.io/badge/declaraciones-typescript-blue?logo=typescript">
+<img alt="NPM Version" src="https://img.shields.io/badge/node%20version-%3E=20.12.2-489248?logo=nodedotjs">
+</center>
 
 ### ¿Qué es "NekoApi"?
 
