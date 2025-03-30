@@ -3,15 +3,10 @@
 <center>creada apartir de <b>cacao_nekoapi</b> y <b>nekoapi.beta</b> en npm.js</center>
 <br>
 <center>
-<<<<<<< HEAD
 <img alt="NPM Version" src="https://img.shields.io/npm/v/neekuro?logo=npm&style=flat&color=0d8973">
 <img alt="Downloads" src="https://img.shields.io/npm/dw/neekuro?style=flat&color=bf9308&label=Descargas">
-=======
-<p><img alt="NPM Version" src="https://img.shields.io/npm/v/nekoapi?logo=npm&style=flat&color=0d8973">
-<img alt="Downloads" src="https://img.shields.io/npm/dw/nekoapi?style=flat&color=bf9308&label=Descargas">
->>>>>>> cdc766577bbe8e1f256cd13c8c514e994eb2458e
 <img alt="Typescript" src="https://img.shields.io/badge/declaraciones-typescript-blue?logo=typescript">
-<img alt="NPM Version" src="https://img.shields.io/badge/node%20version-%3E=20.12.2-489248?logo=nodedotjs"></p>
+<img alt="NPM Version" src="https://img.shields.io/badge/node%20version-%3E=20.12.2-489248?logo=nodedotjs">
 </center>
 
 ### ¿Qué es "NeeKuro"?
