@@ -8,6 +8,7 @@ exports.User = require('../classes/user/user')
 
 exports.NekoGif = require('../classes/package/nekogif')
 exports.BaseUser = require('../classes/user/baseuser')
+exports.Welcome = require('../classes/package/welcome')
 
 // rest
 
@@ -20,4 +21,4 @@ exports.Error = require('../classes/errors/error')
 
 //#region "constantes"
 
-exports.SFW = require('../classes/SFW')
+exports.SFW = require('../classes/sfw')

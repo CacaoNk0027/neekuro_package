@@ -1,17 +1,17 @@
-<center> <h1>NekoApi</h1> </center>
+<center> <h1>NeeKuro</h1> </center>
 <center>de <b>Kmz Kuro</b> en nombre de <b>NexaTDC</b></center>
 <center>creada apartir de <b>cacao_nekoapi</b> y <b>nekoapi.beta</b> en npm.js</center>
 <br>
 <center>
-<img alt="NPM Version" src="https://img.shields.io/npm/v/nekoapi?logo=npm&style=flat&color=0d8973">
-<img alt="Downloads" src="https://img.shields.io/npm/dw/nekoapi?style=flat&color=bf9308&label=Descargas">
+<img alt="NPM Version" src="https://img.shields.io/npm/v/neekuro?logo=npm&style=flat&color=0d8973">
+<img alt="Downloads" src="https://img.shields.io/npm/dw/neekuro?style=flat&color=bf9308&label=Descargas">
 <img alt="Typescript" src="https://img.shields.io/badge/declaraciones-typescript-blue?logo=typescript">
 <img alt="NPM Version" src="https://img.shields.io/badge/node%20version-%3E=20.12.2-489248?logo=nodedotjs">
 </center>
 
-### ¿Qué es "NekoApi"?
+### ¿Qué es "NeeKuro"?
 
-NekoApi es una biblioteca de imágenes con temática de anime para bots de Discord.
+NeeKuro es una biblioteca de imágenes con temática de anime para bots de Discord e imagenes de bienvenida.
 
 Principalmente se creo con el fin de ser unicamente para <b>Maple Bot</b>. Sin embargo, desde que se decidio hacer a Maple de codigo publico, tambien se decidio que tanto su API como paquete fuesen libres.
 
@@ -20,36 +20,36 @@ Principalmente se creo con el fin de ser unicamente para <b>Maple Bot</b>. Sin e
 ## Instalacion
 
 ```sh
-npm install nekoapi
+npm install neekuro
 ```
 
 ## Ejemplos
 
-NekoApi es un paquete que requiere de un token para llevar a cabo sus sollicitudes, por lo que requieres de ir a la [API Oficial](https://nekoapi-0kp7.onrender.com/) para poder generar un token.
+NeeKuro es un paquete que requiere de un token para llevar a cabo sus sollicitudes, por lo que requieres de ir a la [API Oficial](https://www.nexatdc.work.gd/api/) para poder generar un token.
 
-#### primeros pasos
+### primeros pasos
 1 - Instanciamiento de usuario y establecimiento del token.<br>Este paso se requiere ya que con ello se establece globalmente el token por el paquete
 <hr>
 
 ```javascript
 require('dotenv').config();
-// importacion del paquete nekoapi
-const nekoapi = require('nekoapi');
+// importacion del paquete neekuro
+const neekuro = require('neekuro');
 
 // instanciamiento del usuario
-const user = new nekoapi.User();
+const user = new neekuro.User();
 
 // establecimiento del token
 user.token(process.env['ApiToken'])
 ```
 <hr>
 
-2 - Peticion de imagenes simple
+#### Peticion de imagenes simple
 Una vez estableciste el token puedes comenzar a pedir imagenes
 
 ```javascript
 
-const nekoapi = require('nekoapi');
+const neekuro = require('neekuro');
 
 /**
  * Codigo de usuario
@@ -58,7 +58,7 @@ const nekoapi = require('nekoapi');
 // es necesario escribir todo siempre dentro de una funcion asincrona
 async function ObtenerImagen() {
     // obtenemos un gif con el metodo getGif de SFW
-    const cuddle = await nekoapi.SFW.getGif('action', 'cuddle');
+    const cuddle = await neekuro.SFW.getGif('action', 'cuddle');
     
     // imprimimos la url y el anime del gif
     console.log(cuddle.getUrl(), cuddle.getAnime())
@@ -69,6 +69,32 @@ ObtenerImagen();
 
 // nota: no te aguites por el gif y subcategoria, todo viene en documentado con typescript, solo tienes que completar los pasos :)
 ```
+#### Ejemplo de imagenes de bienvenida
+Las imagenes de bienvenida son otra de las alternativas que otorga NeeKuro, puedes hacer una imagen de la siguiente manera:
+```javascript
+// obtenemos directamente la clase del paquete
+const { Welcome } = require('neekuro');
+const fs = require('fs');
+
+// Configuración básica, añade un avatar titulo y descripción
+const welcome = new Welcome()
+  .setAvatar('https://ejemplo.com/avatar.jpg')
+  .setTitle('¡Bienvenido!')
+  .setDescription('Al servidor de Discord');
+
+// Genera y guarda la imagen
+welcome.build()
+  .then(image => fs.writeFileSync('bienvenida.png', image))
+  .then(() => console.log('Imagen creada correctamente!'))
+  .catch(err => console.error('Error:', err.message));
+
+// nota: como antes, todo viene bien documentado en el paquete, solo sigue los pasos y explora por ti ;3
+```
+<hr>
+<center>
+<p>Resultado esperado</p>
+<img src="./sources/assets/example.png" style="width: 60%; max-width: 500px;" alt="Texto alternativo">
+</center>
 
 ## Contenido
 
@@ -78,7 +104,6 @@ Lo siguente es lo que contiene (o contendra) el paquete
 |-|-|-|
 | Sfw | Contenido de roleplay no nsfw | en desarrollo
 | Nsfw | Contenido +18 general y roleplay | no comenzada
-| Gen | Categoria generadora de imagenes con canvas | no comenzada
 
 ## Finalmente....
 
@@ -95,4 +120,4 @@ Principalmente terminaremos la categoria acción y reacción para tener la prime
 <b><i>No es para mi, es para la comunidad... Si no es para la comunidad, no es para nadie...</i></b>
 <i>- NexaTDC</i>
 <br><br><br><br>
-CC. Creative Commons 2024 - @CacaoNk0027
+CC. Creative Commons 2025 - @CacaoNk0027

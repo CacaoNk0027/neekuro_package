@@ -13,7 +13,7 @@ class NekoError extends Error {
     constructor(name, message) {
         super(message);
         
-        this.name = `NekoApi Error [${name}]`
+        this.name = `NeeKuro Error [${name}]`
         
         /**
          * @type {string}
