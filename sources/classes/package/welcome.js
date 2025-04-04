@@ -56,31 +56,31 @@ class Welcome {
          */
         this.data = {
             font: 'arial',
-            width: 1024,
-            height: 450,
+            width: 1140,
+            height: 520,
             background: {
                 type: 'color',
                 value: '#23272A'
             },
             avatar: {
                 source: null,
-                x: 455,
+                x: 448,
                 y: 80,
                 radio: 120,
                 border: "#F7F7F7"
             },
             title: {
                 content: "¡Bienvenido!",
-                x: 590,
-                y: 450,
-                font_size: 40,
+                x: 565,
+                y: 400,
+                font_size: 55,
                 text_color: '#FFFFFF'
             },
             description: {
                 content: 'Al mejor servidor de discord',
                 x: 590,
-                y: 500,
-                font_size: 30,
+                y: 450,
+                font_size: 35,
                 text_color: "#F7F7F7"
             }
         }
@@ -291,7 +291,7 @@ class Welcome {
     /**
      * Establece el fondo de la imagen de bienvenida (color o imagen)
      * @param {'color'|'image'} type - Tipo de fondo ('color' o 'image')
-     * @param {string|Buffer} data - Color hexadecimal (ej. '#FF5733') o imagen (URL/Buffer)
+     * @param {string|Buffer} value - Color hexadecimal (ej. '#FF5733') o imagen (URL/Buffer)
      * @returns {Welcome}
      * @throws {NekoError} Si los parámetros son inválidos
      * @example
@@ -305,36 +305,36 @@ class Welcome {
      * const imageBuffer = fs.readFileSync('fondo.jpg');
      * welcome.setBackground('image', imageBuffer);
      */
-    setBackground(type, data) {
+    setBackground(type, value) {
         if (!type) throw new NekoError('BackgroundError', 'El parámetro <type> no puede estar vacío');
         if (typeof type != 'string') throw new NekoError('TypeError', `El parámetro <type> debe ser string, recibió ${typeof type}`);
         if (!['color', 'image'].includes(type)) throw new NekoError('BackgroundError', 'El tipo de fondo debe ser "color" o "image"');
 
-        if (!data) throw new NekoError('BackgroundError', 'El parámetro <data> no puede estar vacío');
+        if (!value) throw new NekoError('BackgroundError', 'El parámetro <value> no puede estar vacío');
 
         if (type == 'color') {
-            if (typeof data != 'string') throw new NekoError('TypeError', 'Para fondo de color, <data> debe ser string');
-            if (!data.startsWith('#')) throw new NekoError('BackgroundError', 'El color debe comenzar con \'#\'');
-            if (!hex_reg.test(data)) throw new NekoError('BackgroundError', 'El valor no es un color hexadecimal válido');
+            if (typeof value != 'string') throw new NekoError('TypeError', 'Para fondo de color, <data> debe ser string');
+            if (!value.startsWith('#')) throw new NekoError('BackgroundError', 'El color debe comenzar con \'#\'');
+            if (!hex_reg.test(value)) throw new NekoError('BackgroundError', 'El valor no es un color hexadecimal válido');
 
-            this.data.background = { type, data };
+            this.data.background = { type, value };
             return this;
         }
 
         if (type == 'image') {
-            if (typeof data != 'string' && !Buffer.isBuffer(data)) {
-                throw new NekoError('TypeError', 'Para fondo de imagen, <data> debe ser URL (string) o Buffer');
+            if (typeof value != 'string' && !Buffer.isBuffer(value)) {
+                throw new NekoError('TypeError', 'Para fondo de imagen, <value> debe ser URL (string) o Buffer');
             }
 
-            if (typeof data == 'string') {
+            if (typeof value == 'string') {
                 try {
-                    new URL(data);
+                    new URL(value);
                 } catch (error) {
                     throw new NekoError('BackgroundError', 'La URL proporcionada no es válida');
                 }
             }
 
-            this.data.background = { type, data };
+            this.data.background = { type, value };
             return this;
         }
     }

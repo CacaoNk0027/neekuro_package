@@ -216,10 +216,10 @@ export class Welcome {
     /**
      * Establece el fondo de la imagen (color o imagen)
      * @param type Tipo de fondo ('color' o 'image')
-     * @param data Color hexadecimal o imagen (URL/Buffer)
+     * @param value Color hexadecimal o imagen (URL/Buffer)
      * @throws {NekoError} Si los parámetros son inválidos
      */
-    setBackground(type: 'color' | 'image', data: string | Buffer): this;
+    setBackground(type: 'color' | 'image', value: string | Buffer): this;
 
     /**
      * Establece el avatar y su configuración
