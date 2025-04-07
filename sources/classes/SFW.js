@@ -3,10 +3,10 @@
  * @typedef {import('../typings').GifMap} GifMap
  */
 
-const APIClient = require('../rest/apiclient');
-const NekoError = require('./errors/error');
-const NekoGif = require('./package/nekogif');
-const { getToken } = require('./user/baseuser');
+const APIClient = require('../rest/ApiClient.js');
+const NekoError = require('./errors/Error.js');
+const NekoGif = require('./package/NekoGif.js');
+const { getToken } = require('./user/BaseUser.js');
 
 // url base de la api para SFW
 const base = 'https://www.nexatdc.work.gd/api/sfw/'

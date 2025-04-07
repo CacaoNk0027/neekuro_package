@@ -1,6 +1,6 @@
 'use strict';
 const Canvas = require('canvas');
-const NekoError = require('../errors/error');
+const NekoError = require('../errors/Error.js');
 const hex_reg = require('hex-color-regex')({ strict: true })
 const path = require('path');
 
