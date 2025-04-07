@@ -3,7 +3,7 @@
  * @typedef {import('../typings').GifMap} GifMap
  */
 
-const APIClient = require('../rest/ApiClient.js');
+const APIClient = require('../rest/APIClient.js');
 const NekoError = require('./errors/Error.js');
 const NekoGif = require('./package/NekoGif.js');
 const { getToken } = require('./user/BaseUser.js');

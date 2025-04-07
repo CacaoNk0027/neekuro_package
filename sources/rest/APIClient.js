@@ -5,7 +5,7 @@
  * @typedef {import('../typings').GifResponse} GifResponse
  */
 
-const APIError = require('../classes/errors/apierror');
+const APIError = require('../classes/errors/APIerror.js');
 
 const fetch = import('node-fetch');
 
