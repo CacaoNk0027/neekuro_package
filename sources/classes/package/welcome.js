@@ -5,9 +5,9 @@ const hex_reg = require('hex-color-regex')({ strict: true })
 const path = require('path');
 
 /**
- * @typedef {import('../../typings/index.js').FontNames} FontNames
- * @typedef {import('../../typings/index.js').WelcomeTextData} WelcomeTextData 
- * @typedef {import('../../typings/index.js').WelcomeAvatarData} WelcomeAvatarData
+ * @typedef {import('../../typings').FontNames} FontNames
+ * @typedef {import('../../typings').WelcomeTextData} WelcomeTextData 
+ * @typedef {import('../../typings').WelcomeAvatarData} WelcomeAvatarData
  */
 
 /**
