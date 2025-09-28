@@ -9,7 +9,7 @@ const NekoGif = require('./package/NekoGif.js');
 const { getToken } = require('./user/BaseUser.js');
 
 // url base de la api para SFW
-const base = 'https://www.nexatdc.work.gd/api/sfw/'
+const base = 'https://www.nexatdc.work.gd/api/sfw'
 
 /**
  * Clase SFW
