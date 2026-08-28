@@ -1,6 +1,7 @@
 'use strict';
 
 let tokenGlobal = null;
+let tokenVersion = 0;
 
 /**
  * Clase BaseUser
@@ -15,7 +16,9 @@ class BaseUser {
         if (typeof token !== 'string' || !token.trim()) {
             throw new TypeError('El token debe ser una cadena no vacía');
         }
-        tokenGlobal = token;
+        const normalizedToken = token.trim();
+        if (tokenGlobal !== normalizedToken) tokenVersion += 1;
+        tokenGlobal = normalizedToken;
     }
 
     /**
@@ -24,6 +27,14 @@ class BaseUser {
      */
     static getToken() {
         return tokenGlobal;
+    }
+
+    /**
+     * Identificador interno que cambia cada vez que se establece otro token.
+     * @returns {number}
+     */
+    static getTokenVersion() {
+        return tokenVersion;
     }
 }
 

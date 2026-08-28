@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.2.0] - 28-08-2026
+
+### Added
+- `SFW.getGifs()` permite obtener todas las imágenes de una subcategoría.
+- `SFW.clearCache()` permite invalidar toda la caché, una categoría o una subcategoría.
+- `SFW.setBaseURL()` permite configurar un endpoint HTTPS alternativo.
+- `SFW.setCacheTTL()` permite configurar o desactivar el tiempo de caché.
+
+### Changed
+- `SFW.getGif()` conserva listas en memoria durante cinco minutos y selecciona aleatoriamente en cada llamada.
+- Las solicitudes concurrentes para la misma subcategoría se agrupan en una sola petición HTTP.
+- Cuando existen varias imágenes se evita repetir inmediatamente la selección anterior.
+- Cambiar el token invalida automáticamente las listas obtenidas con el token previo.
+- El cliente REST admite respuestas tipadas distintas a un único GIF.
+
+### Compatibility
+- `SFW.getGif(category, gif)` mantiene la misma firma y continúa devolviendo `NekoGif`.
+- La caché solamente cambia la frecuencia de consulta; no fija una imagen durante el TTL.
+
 ## [2.1.0] - 28-08-2026
 
 ### Changed

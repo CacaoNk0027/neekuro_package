@@ -24,6 +24,16 @@ export const SFW: {
      * cuddle.getAnime(); 
      */
     getGif<T extends SfwCategories>(category: T, gif: GifMap[T]): Promise<NekoGif>
+    /** Obtiene todos los GIF disponibles y utiliza la caché interna. */
+    getGifs<T extends SfwCategories>(category: T, gif: GifMap[T]): Promise<NekoGif[]>
+    /** Limpia toda la caché de imágenes. */
+    clearCache(): void
+    /** Limpia la caché de una categoría completa o de una subcategoría. */
+    clearCache<T extends SfwCategories>(category: T, gif?: GifMap[T]): void
+    /** Cambia la URL HTTPS utilizada para consultar SFW. */
+    setBaseURL(url: string): void
+    /** Configura el TTL en milisegundos. El valor cero desactiva la caché. */
+    setCacheTTL(milliseconds: number): void
 }
 
 //#endregion
@@ -141,16 +151,22 @@ export interface NekoGifInterface {
     anime?: string | null
 }
 
+export interface GifData {
+    url: string
+    anime: string
+}
+
 export declare interface GifMap {
     action: ActionGifs
     reaction: ReactionGifs
 }
 
 export interface GifResponse extends ApiResponse {
-    data: {
-        url: string;
-        anime: string;
-    }
+    data: GifData
+}
+
+export interface GifListResponse extends ApiResponse {
+    data: GifData[]
 }
 
 export interface ApiResponse {
@@ -303,7 +319,10 @@ export class BaseUser {
      * Obten el token del usuario si este ya se estableció
      * @returns {string} Token de usuario
      */
-    public static getToken(): string
+    public static getToken(): string | null
+
+    /** Versión interna que cambia cuando se establece un token diferente. */
+    public static getTokenVersion(): number
 
     /**
      * Establece el token "global" para todo el paquete
@@ -330,7 +349,7 @@ export class APIClient {
      * @param endpoint establece la ruta a la que se quiere comunicar en la api
      * @throws {APIError} solo si sucede un error entre solicitudes
      */
-    public get(endpoint: string, options?: { timeout?: number }): Promise<GifResponse>
+    public get<T extends ApiResponse = GifResponse>(endpoint: string, options?: { timeout?: number }): Promise<T>
 }
 
 /**

@@ -69,6 +69,40 @@ ObtenerImagen();
 
 // nota: no te aguites por el gif y subcategoria, todo viene en documentado con typescript, solo tienes que completar los pasos :)
 ```
+
+`getGif()` selecciona una imagen nuevamente en cada llamada. Internamente, NeeKuro
+conserva durante cinco minutos la lista de la subcategoría para reducir solicitudes
+HTTP; no conserva un único GIF durante ese tiempo. Cuando existen varias imágenes,
+evita mostrar la misma dos veces consecutivas.
+
+También puedes obtener la lista completa:
+
+```javascript
+const gifs = await neekuro.SFW.getGifs('action', 'cuddle');
+console.log(gifs.map(gif => gif.getUrl()));
+```
+
+Si actualizaste el catálogo y necesitas consultarlo inmediatamente, puedes limpiar
+una subcategoría, una categoría completa o toda la caché:
+
+```javascript
+neekuro.SFW.clearCache('action', 'cuddle');
+neekuro.SFW.clearCache('action');
+neekuro.SFW.clearCache();
+```
+
+El TTL se expresa en milisegundos y un valor de cero desactiva la caché:
+
+```javascript
+neekuro.SFW.setCacheTTL(5 * 60 * 1000);
+```
+
+Para pruebas o instalaciones propias de la API puede configurarse otra URL HTTPS:
+
+```javascript
+neekuro.SFW.setBaseURL('https://api.example.com/api/sfw');
+```
+
 #### Ejemplo de imagenes de bienvenida
 Las imagenes de bienvenida son otra de las alternativas que otorga NeeKuro, puedes hacer una imagen de la siguiente manera:
 ```javascript

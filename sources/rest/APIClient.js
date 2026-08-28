@@ -51,7 +51,8 @@ class APIClient {
     /**
      * Obtiene el objeto compartido por la api a traves de la ruta y con autorizacion por token
      * @param {string} endpoint establece la ruta a la que se quiere comunicar
-     * @returns {Promise<GifResponse>}
+     * @template {import('../typings').ApiResponse} [T=GifResponse]
+     * @returns {Promise<T>}
      * @throws {APIError} solo si sucede un error entre solicitudes
      */
     async get(endpoint, options = {}) {
@@ -80,7 +81,7 @@ class APIClient {
                 throw new APIError(endpoint, response, data);
             }
 
-            return data
+            return /** @type {T} */ (data)
         } catch (error) {
             if (error instanceof APIError) {
                 throw error;
