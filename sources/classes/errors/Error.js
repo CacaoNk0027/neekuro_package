@@ -19,6 +19,7 @@ class NekoError extends Error {
          * @type {string}
          */
         this.message = message
+        Error.captureStackTrace?.(this, NekoError);
     }
 }
 

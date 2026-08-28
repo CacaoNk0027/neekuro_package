@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "ES2022",
+    "types": ["node"]
+  },
+  "files": ["typecheck.ts"]
+}

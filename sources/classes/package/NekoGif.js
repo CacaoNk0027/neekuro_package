@@ -15,18 +15,21 @@ class NekoGif {
      * @param {GifResponse} response respuesta de la api 
      */
     constructor(response) {
+        if (!response || typeof response !== 'object' || !response.data) {
+            throw new TypeError('La respuesta no contiene datos de imagen');
+        }
         
         /**
          * URL del gif
          * @type {string|null}
          */
-        this.url = response.data.url || null
+        this.url = typeof response.data.url === 'string' ? response.data.url : null
         
         /**
          * Anime del gif
          * @type {string|null}
          */
-        this.anime = response.data.anime || null
+        this.anime = typeof response.data.anime === 'string' ? response.data.anime : null
     }
 
     /**

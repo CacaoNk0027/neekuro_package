@@ -2,7 +2,7 @@
 
 /**
  * @typedef {import('../../typings').ApiResponse} ApiResponse
- * @typedef {import('node-fetch').Response} Response
+ * @typedef {{url?: string, status?: number}} ResponseLike
  */
 
 /**
@@ -14,15 +14,13 @@ class APIError extends Error {
     /**
      * Crea la instancia del error
      * @param {string} endpoint la ruta a la que se realizo la peticion
-     * @param {Response} response respuesta de node-fetch
+     * @param {ResponseLike} response respuesta HTTP o representación de un error de red
      * @param {ApiResponse} data respuesta de la api
      */
     constructor(endpoint, response, data) {
-        super();
+        super(APIError.determineMessage(data));
         
         this.name = `NekoREST Error [${endpoint}]`
-        this.message = this.#determineMessage(data);
-
         /**
          * @type {string}
          */
@@ -31,7 +29,7 @@ class APIError extends Error {
         /**
          * @type {number}
          */
-        this.statusCode = parseInt(response?.status ?? 500);
+        this.statusCode = Number.parseInt(response?.status ?? 500, 10);
 
         /**
          * @type {ApiResponse}
@@ -45,7 +43,7 @@ class APIError extends Error {
      * @param {ApiResponse} response respuesta de la api
      * @returns {string} mensaje de error
      */
-    #determineMessage(response) {
+    static determineMessage(response = {}) {
         if(response.code === 403) {
             return 'TOKEN ERROR: el token que haz proporcionado es invalido'
         } else 
@@ -54,6 +52,10 @@ class APIError extends Error {
         } else {
             return response.message ?? 'descripcion no dada'
         }
+    }
+
+    static fromNetworkError(endpoint, url, message) {
+        return new APIError(endpoint, { url, status: 503 }, { code: 503, message });
     }
 }
 

@@ -3,6 +3,14 @@ const Canvas = require('canvas');
 const NekoError = require('../errors/Error.js');
 const hex_reg = require('hex-color-regex')({ strict: true })
 const path = require('path');
+const fs = require('fs');
+const { loadImageSource, parseRemoteURL, validateImageBuffer } = require('../../utils/imageLoader.js');
+
+const DEFAULT_WIDTH = 1140;
+const DEFAULT_HEIGHT = 520;
+const MIN_DIMENSION = 128;
+const MAX_DIMENSION = 4096;
+const registeredFonts = new Set();
 
 /**
  * @typedef {import('../../typings').FontNames} FontNames
@@ -30,6 +38,7 @@ class Welcome {
         /**
          * @property {Object} data - Configuración actual de la imagen
          * @property {string} data.font - Fuente actualmente seleccionada
+         * @property {'center'|'manual'} data.layout - Distribución de los elementos
          * @property {number} data.width - Ancho actual de la imagen
          * @property {number} data.height - Alto actual de la imagen
          * @property {Object} data.background - Configuración del fondo
@@ -56,8 +65,9 @@ class Welcome {
          */
         this.data = {
             font: 'arial',
-            width: 1140,
-            height: 520,
+            layout: 'center',
+            width: DEFAULT_WIDTH,
+            height: DEFAULT_HEIGHT,
             background: {
                 type: 'color',
                 value: '#23272A'
@@ -84,6 +94,7 @@ class Welcome {
                 text_color: "#F7F7F7"
             }
         }
+        this.setFont('arial');
     }
 
     /**
@@ -103,17 +114,23 @@ class Welcome {
         if (!width) throw new NekoError('ResolutionError', 'el parametro <width> no puede quedar vacio');
         if (!height) throw new NekoError('ResolutionError', 'el parametro <height> no puede quedar vacio');
 
-        if (width == 'default') width = this.data.width; else {
-            if (typeof width != 'number') throw new NekoError('TypeError', 'el parametro <width> solo acepta tipo \'number\', recibió ' + typeof width);
-            this.data.width = width;
-        }
-
-        if (height == 'default') height = this.data.height; else {
-            if (typeof height != 'number') throw new NekoError('TypeError', 'el parametro <height> solo acepta tipo \'number\', recibió ' + typeof height);
-            this.data.height = height;
-        }
+        this.data.width = width === 'default' ? DEFAULT_WIDTH : validateDimension(width, 'width');
+        this.data.height = height === 'default' ? DEFAULT_HEIGHT : validateDimension(height, 'height');
 
         return this
+    }
+
+    /**
+     * Selecciona la distribución automática centrada o las coordenadas manuales.
+     * @param {'center'|'manual'} layout
+     * @returns {Welcome}
+     */
+    setLayout(layout) {
+        if (!['center', 'manual'].includes(layout)) {
+            throw new NekoError('LayoutError', 'El layout debe ser "center" o "manual"');
+        }
+        this.data.layout = layout;
+        return this;
     }
 
     /**
@@ -145,13 +162,18 @@ class Welcome {
             case 'custom':
                 if (!dir) throw new NekoError('FontError', 'el parametro <dir> no puede quedar vacio en un tipo de fuente customizada');
                 if (typeof dir != 'string') throw new NekoError('TypeError', 'el parametro <dir> solo acepta tipo \'string\', recibió ' + typeof dir);
-                if (!dir.endsWith('ttf')) throw new NekoError('FontError', 'se nesecita un archivo ttf en el parametro <dir>')
-                ruta = path.join(__dirname, '../../../../' + dir.replace('./', ''));
+                if (path.extname(dir).toLowerCase() !== '.ttf') throw new NekoError('FontError', 'se necesita un archivo TTF en el parametro <dir>')
+                ruta = path.resolve(dir);
                 break;
             default: throw new NekoError('FontError', 'el parametro <name> no acepta ningun tipo diferente a los preterminados');
         }
         try {
-            Canvas.registerFont(ruta, { family: name })
+            if (!fs.existsSync(ruta)) throw new Error('Font not found');
+            const fontKey = `${name}:${ruta}`;
+            if (!registeredFonts.has(fontKey)) {
+                Canvas.registerFont(ruta, { family: name });
+                registeredFonts.add(fontKey);
+            }
         } catch (error) {
             throw new NekoError('DirError', 'no se puede encontrar el directorio especificado')
         }
@@ -206,18 +228,20 @@ class Welcome {
             }
 
             // validacion de posiciones
-            if (data.x) {
+            if (data.x !== undefined) {
                 if (typeof data.x !== 'number') {
                     throw new NekoError('TypeError', `La propiedad <x> solo acepta tipo 'number', recibió ${typeof data.x}`);
                 }
                 this.data.title.x = data.x;
+                this.data.layout = 'manual';
             }
 
-            if (data.y) {
+            if (data.y !== undefined) {
                 if (typeof data.y !== 'number') {
                     throw new NekoError('TypeError', `La propiedad <y> solo acepta tipo 'number', recibió ${typeof data.y}`);
                 }
                 this.data.title.y = data.y;
+                this.data.layout = 'manual';
             }
         }
 
@@ -270,18 +294,20 @@ class Welcome {
             }
 
             // validacion de posiciones
-            if (data.x) {
+            if (data.x !== undefined) {
                 if (typeof data.x !== 'number') {
                     throw new NekoError('TypeError', `La propiedad <x> solo acepta tipo 'number', recibió ${typeof data.x}`);
                 }
                 this.data.description.x = data.x;
+                this.data.layout = 'manual';
             }
 
-            if (data.y) {
+            if (data.y !== undefined) {
                 if (typeof data.y !== 'number') {
                     throw new NekoError('TypeError', `La propiedad <y> solo acepta tipo 'number', recibió ${typeof data.y}`);
                 }
                 this.data.description.y = data.y;
+                this.data.layout = 'manual';
             }
         }
 
@@ -327,11 +353,9 @@ class Welcome {
             }
 
             if (typeof value == 'string') {
-                try {
-                    new URL(value);
-                } catch (error) {
-                    throw new NekoError('BackgroundError', 'La URL proporcionada no es válida');
-                }
+                parseRemoteURL(value, 'el fondo');
+            } else {
+                validateImageBuffer(value, 'el fondo');
             }
 
             this.data.background = { type, value };
@@ -369,42 +393,17 @@ class Welcome {
         }
 
         if (typeof source === 'string') {
-            try {
-                const url = new URL(source);
-                
-                if (!['http:', 'https:'].includes(url.protocol)) {
-                    throw new NekoError('AvatarError', 'La URL debe usar HTTP/HTTPS');
-                }
-
-                const extension = url.pathname.toLowerCase().split('.').pop();
-                if (!['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-                    throw new NekoError('AvatarError', 'Formato de imagen no soportado. Usa JPEG, PNG o GIF');
-                }
-            } catch (error) {
-                if (error instanceof NekoError) throw error;
-                throw new NekoError('AvatarError', 'La URL del avatar no es válida');
-            }
+            parseRemoteURL(source, 'el avatar');
         }
         
         if (Buffer.isBuffer(source)) {
-            if (source.length < 8) { 
-                throw new NekoError('AvatarError', 'El Buffer de imagen es demasiado pequeño');
-            }
-            
-            const header = source.toString('hex', 0, 8);
-            const isJPEG = header.startsWith('ffd8ff');
-            const isPNG = header.startsWith('89504e470d0a1a0a');
-            const isGIF = header.startsWith('47494638');
-            
-            if (!isJPEG && !isPNG && !isGIF) {
-                throw new NekoError('AvatarError', 'Formato de imagen no soportado. El Buffer debe ser JPEG, PNG o GIF');
-            }
+            validateImageBuffer(source, 'el avatar');
         }
     
         this.data.avatar.source = source;
 
         if (data) {
-            if (data.x) {
+            if (data.x !== undefined) {
                 if (typeof data.x != 'number') {
                     throw new NekoError('TypeError', 'La propiedad <x> debe ser un número');
                 }
@@ -412,13 +411,15 @@ class Welcome {
                     throw new NekoError('AvatarError', 'La posición X no puede ser negativa');
                 }
                 this.data.avatar.x = data.x;
+                this.data.layout = 'manual';
             }
 
-            if (data.y) {
+            if (data.y !== undefined) {
                 if (typeof data.y != 'number') {
                     throw new NekoError('TypeError', 'La propiedad <y> debe ser un número');
                 }
                 this.data.avatar.y = data.y;
+                this.data.layout = 'manual';
             }
 
             if (data.border) {
@@ -434,9 +435,12 @@ class Welcome {
                 this.data.avatar.border = data.border;
             }
 
-            if (data.radio) {
+            if (data.radio !== undefined) {
                 if (typeof data.radio != 'number') {
                     throw new NekoError('TypeError', 'La propiedad <radio> debe ser un número');
+                }
+                if (!Number.isFinite(data.radio) || data.radio <= 0 || data.radio > Math.min(this.data.width, this.data.height) / 2) {
+                    throw new NekoError('AvatarError', 'El radio debe ser positivo y caber dentro de la imagen');
                 }
                 this.data.avatar.radio = data.radio;
             }
@@ -464,8 +468,8 @@ class Welcome {
 
         try {
             const [bg, avatar] = await Promise.all([
-                this.data.background.type == 'image' ? Canvas.loadImage(this.data.background.value) : null,
-                Canvas.loadImage(this.data.avatar.source)
+                this.data.background.type == 'image' ? loadImageSource(this.data.background.value, 'el fondo') : null,
+                loadImageSource(this.data.avatar.source, 'el avatar')
             ])
 
             const canvas = Canvas.createCanvas(this.data.width, this.data.height)
@@ -482,7 +486,9 @@ class Welcome {
             }
 
             const maxTitleWidth = this.data.width * 0.8;
-            let titleFontSize = this.data.title.font_size;
+            let titleFontSize = this.data.layout === 'center'
+                ? Math.min(this.data.title.font_size, this.data.height * 0.14)
+                : this.data.title.font_size;
             ctx.font = `${titleFontSize}px ${this.data.font}`;
 
             while (ctx.measureText(this.data.title.content).width > maxTitleWidth && titleFontSize > 10) {
@@ -490,12 +496,10 @@ class Welcome {
                 ctx.font = `${titleFontSize}px ${this.data.font}`;
             }
 
-            ctx.fillStyle = this.data.title.text_color;
-            ctx.textAlign = "center";
-            ctx.fillText(this.data.title.content, this.data.title.x, this.data.title.y);
-
             const maxDescWidth = this.data.width * 0.9;
-            let descFontSize = this.data.description.font_size;
+            let descFontSize = this.data.layout === 'center'
+                ? Math.min(this.data.description.font_size, this.data.height * 0.09)
+                : this.data.description.font_size;
             ctx.font = `${descFontSize}px ${this.data.font}`;
 
             while (ctx.measureText(this.data.description.content).width > maxDescWidth && descFontSize > 8) {
@@ -503,13 +507,21 @@ class Welcome {
                 ctx.font = `${descFontSize}px ${this.data.font}`;
             }
 
-            ctx.fillStyle = this.data.description.text_color;
-            ctx.textAlign = "center";
-            ctx.fillText(this.data.description.content, this.data.description.x, this.data.description.y);
+            const layout = this.data.layout === 'center'
+                ? calculateCenteredLayout(this.data, titleFontSize, descFontSize)
+                : {
+                    avatarX: this.data.avatar.x,
+                    avatarY: this.data.avatar.y,
+                    radio: this.data.avatar.radio,
+                    titleX: this.data.title.x,
+                    titleY: this.data.title.y,
+                    descriptionX: this.data.description.x,
+                    descriptionY: this.data.description.y
+                };
 
-            const x = this.data.avatar.x;
-            const y = this.data.avatar.y;
-            const radio = this.data.avatar.radio;
+            const x = layout.avatarX;
+            const y = layout.avatarY;
+            const radio = layout.radio;
 
             if (this.data.avatar.border) {
                 ctx.beginPath();
@@ -527,6 +539,16 @@ class Welcome {
             ctx.drawImage(avatar, x, y, radio * 2, radio * 2);
             ctx.restore();
 
+            ctx.textAlign = 'center';
+            ctx.textBaseline = this.data.layout === 'center' ? 'middle' : 'alphabetic';
+            ctx.font = `${titleFontSize}px ${this.data.font}`;
+            ctx.fillStyle = this.data.title.text_color;
+            ctx.fillText(this.data.title.content, layout.titleX, layout.titleY);
+
+            ctx.font = `${descFontSize}px ${this.data.font}`;
+            ctx.fillStyle = this.data.description.text_color;
+            ctx.fillText(this.data.description.content, layout.descriptionX, layout.descriptionY);
+
             return canvas.toBuffer();
         } catch (error) {
             if(error instanceof NekoError) {
@@ -535,6 +557,50 @@ class Welcome {
             throw new NekoError('GenerateError', 'Error al generar la imagen: '+error.message)
         }
     }
+}
+
+function calculateCenteredLayout(data, titleFontSize, descFontSize) {
+    const borderSize = data.avatar.border ? 6 : 0;
+    const avatarGap = clamp(data.height * 0.045, 16, 32);
+    const textGap = clamp(data.height * 0.018, 8, 16);
+    const availableHeight = data.height * 0.9;
+    const maxRadio = Math.max(
+        16,
+        (availableHeight - titleFontSize - descFontSize - avatarGap - textGap) / 2 - borderSize
+    );
+    const radio = Math.min(data.avatar.radio, maxRadio);
+    const avatarOuterSize = (radio + borderSize) * 2;
+    const contentHeight = avatarOuterSize + avatarGap + titleFontSize + textGap + descFontSize;
+    const startY = (data.height - contentHeight) / 2;
+    const centerX = data.width / 2;
+    const avatarX = centerX - radio;
+    const avatarY = startY + borderSize;
+    const titleY = startY + avatarOuterSize + avatarGap + titleFontSize / 2;
+    const descriptionY = titleY + titleFontSize / 2 + textGap + descFontSize / 2;
+
+    return {
+        avatarX,
+        avatarY,
+        radio,
+        titleX: centerX,
+        titleY,
+        descriptionX: centerX,
+        descriptionY
+    };
+}
+
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
+function validateDimension(value, name) {
+    if (typeof value !== 'number' || !Number.isInteger(value) || !Number.isFinite(value)) {
+        throw new NekoError('TypeError', `el parametro <${name}> debe ser un número entero`);
+    }
+    if (value < MIN_DIMENSION || value > MAX_DIMENSION) {
+        throw new NekoError('ResolutionError', `<${name}> debe estar entre ${MIN_DIMENSION} y ${MAX_DIMENSION} píxeles`);
+    }
+    return value;
 }
 
 module.exports = Welcome;

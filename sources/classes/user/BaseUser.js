@@ -12,6 +12,9 @@ class BaseUser {
      * @param {string} token token a establecer.
      */
     static setToken(token) {
+        if (typeof token !== 'string' || !token.trim()) {
+            throw new TypeError('El token debe ser una cadena no vacía');
+        }
         tokenGlobal = token;
     }
 

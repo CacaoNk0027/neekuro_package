@@ -13,8 +13,8 @@ class User {
      * @param {string} token Token de la api 
      */
     constructor(token) {
-        this.token_ = token
-        setToken(this.#getToken());
+        this.token_ = undefined;
+        if (token !== undefined) this.token(token);
     }
 
     /**
@@ -23,9 +23,9 @@ class User {
      * @throws {NekoError} si el token no fue dado o no es una cadena
      */
     token(token) {
-        if(!token) throw new NekoError('NoToken', 'el parametro <token> es requerido');
-        if(typeof(token) !== 'string') throw new NekoError('InvalidType', `Token invaldo... el tipo de dato es String no ${typeof(token)}`);
-        this.token_ = token;
+        if(typeof(token) !== 'string') throw new NekoError('InvalidType', `El token debe ser string, no ${typeof(token)}`);
+        if(!token.trim()) throw new NekoError('NoToken', 'el parametro <token> es requerido');
+        this.token_ = token.trim();
         setToken(this.#getToken());
     }
 

@@ -27,7 +27,9 @@ class SFW {
         if (!cat) throw new NekoError('NoInput', 'el parametro <cat> es requerido');
         if (!gif) throw new NekoError('NoInput', 'el parametro <gif> es requerido');
 
-        let solicitud = new APIClient(base, { token: getToken() }), response = null;
+        const token = getToken();
+        if (!token) throw new NekoError('NoToken', 'Debes establecer un token antes de solicitar un GIF');
+        let solicitud = new APIClient(base, { token }), response = null;
         switch (cat) {
             case 'action':
                 response = solicitud.get('/action/' + gif + '?random=true')

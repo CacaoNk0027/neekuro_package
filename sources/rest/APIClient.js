@@ -5,9 +5,10 @@
  * @typedef {import('../typings').GifResponse} GifResponse
  */
 
-const APIError = require('../classes/errors/APIerror.js');
+const APIError = require('../classes/errors/APIError.js');
+const NekoError = require('../classes/errors/Error.js');
 
-const fetch = import('node-fetch');
+const DEFAULT_TIMEOUT_MS = 10_000;
 
 /**
  * Clase APIClient
@@ -20,11 +21,27 @@ class APIClient {
      * @param {APIClientData} data objeto para las solicitudes
      */
     constructor(baseURL, data) {
+        if (typeof baseURL !== 'string' || !baseURL) {
+            throw new NekoError('InvalidBaseURL', 'El parámetro <baseURL> debe ser una URL válida');
+        }
+
+        let parsedBaseURL;
+        try {
+            parsedBaseURL = new URL(baseURL);
+        } catch {
+            throw new NekoError('InvalidBaseURL', 'El parámetro <baseURL> debe ser una URL válida');
+        }
+        if (parsedBaseURL.protocol !== 'https:') {
+            throw new NekoError('InvalidBaseURL', 'La API debe utilizar HTTPS');
+        }
+        if (!data || typeof data.token !== 'string' || !data.token.trim()) {
+            throw new NekoError('NoToken', 'Se requiere un token para utilizar la API');
+        }
         /**
          * url principal
          * @type {string}
          */
-        this.baseURL = baseURL
+        this.baseURL = baseURL.replace(/\/$/, '')
         /**
          * data
          * @type {APIClientData}
@@ -37,28 +54,52 @@ class APIClient {
      * @returns {Promise<GifResponse>}
      * @throws {APIError} solo si sucede un error entre solicitudes
      */
-    async get(endpoint) {
+    async get(endpoint, options = {}) {
+        if (typeof endpoint !== 'string' || !endpoint.startsWith('/')) {
+            throw new NekoError('InvalidEndpoint', 'El endpoint debe comenzar con "/"');
+        }
+
+        const timeout = Number.isFinite(options.timeout) && options.timeout > 0
+            ? options.timeout
+            : DEFAULT_TIMEOUT_MS;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
         try {
-            const response = await (await fetch).default(`${this.baseURL}${endpoint}`, {
+            const response = await fetch(`${this.baseURL}${endpoint}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `${this.data.token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                signal: controller.signal
             });
 
+            const data = await readJson(response);
             if (!response.ok) {
-                throw new APIError(endpoint, response, await response.json());
+                throw new APIError(endpoint, response, data);
             }
 
-            return response.json()
+            return data
         } catch (error) {
             if (error instanceof APIError) {
                 throw error;
-            } else {
-                throw new APIError(endpoint, { message: error.message }, {});
             }
+            const message = error?.name === 'AbortError'
+                ? `La solicitud excedió el tiempo límite de ${timeout} ms`
+                : error?.message ?? 'No fue posible conectar con la API';
+            throw APIError.fromNetworkError(endpoint, `${this.baseURL}${endpoint}`, message);
+        } finally {
+            clearTimeout(timeoutId);
         }
+    }
+}
+
+async function readJson(response) {
+    try {
+        return await response.json();
+    } catch {
+        return { code: response.status, message: 'La API devolvió una respuesta que no es JSON' };
     }
 }
 

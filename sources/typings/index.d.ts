@@ -1,5 +1,3 @@
-import { Response } from "node-fetch";
-
 //#region constants
 
 /**
@@ -111,6 +109,7 @@ export interface WelcomeTextData {
 
 export interface WelcomeData {
     font: FontNames;
+    layout: 'center' | 'manual';
     width: number;
     height: number;
     background: WelcomeBackgroundData;
@@ -148,7 +147,7 @@ export declare interface GifMap {
 }
 
 export interface GifResponse extends ApiResponse {
-    data?: {
+    data: {
         url: string;
         anime: string;
     }
@@ -188,6 +187,9 @@ export class Welcome {
      * @throws {NekoError} Si los parámetros son inválidos
      */
     setResolution(width: number | 'default', height: number | 'default'): this;
+
+    /** Selecciona distribución automática centrada o coordenadas manuales. */
+    setLayout(layout: 'center' | 'manual'): this;
 
     /**
      * Configura la tipografía para el texto de la imagen
@@ -253,7 +255,7 @@ export class User {
      * puedes establecer el token a partir de aqui, pero recomiendo usar el metodo dedicado
      * @param token Token de la api
      */
-    constructor(token: string);
+    constructor(token?: string);
     /**
      * establece el token para usar la api
      * @example 
@@ -328,7 +330,7 @@ export class APIClient {
      * @param endpoint establece la ruta a la que se quiere comunicar en la api
      * @throws {APIError} solo si sucede un error entre solicitudes
      */
-    public get(endpoint: string): Promise<GifResponse>
+    public get(endpoint: string, options?: { timeout?: number }): Promise<GifResponse>
 }
 
 /**
@@ -362,10 +364,10 @@ export class APIError extends Error {
     /**
      * Instanciamiento de un error de api 
      * @param endpoint endpoint: ruta solicitada
-     * @param response response: respuesta por node-fetch
+     * @param response respuesta HTTP o representación de un error de red
      * @param data data: objeto dado por la api
      */
-    constructor(endpoint: string, response: Awaited<Response>, data: ApiResponse);
+    constructor(endpoint: string, response: { url?: string; status?: number }, data: ApiResponse);
 }
 
 /**
@@ -380,5 +382,8 @@ export class NekoError extends Error {
      */
     constructor(name: string, message: string);
 }
+
+/** Alias heredado de versiones 2.0.x. Prefiere NekoError. */
+export { NekoError as Error };
 
 //#endregion

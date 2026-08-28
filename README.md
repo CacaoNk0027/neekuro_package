@@ -90,6 +90,40 @@ welcome.build()
 
 // nota: como antes, todo viene bien documentado en el paquete, solo sigue los pasos y explora por ti ;3
 ```
+
+Las imágenes remotas deben usar HTTPS. El paquete limita cada descarga a 10 MB,
+aplica un tiempo máximo de 10 segundos, comprueba el formato y bloquea direcciones
+locales o privadas. También puedes proporcionar un `Buffer` JPEG, PNG, GIF o WebP.
+
+La resolución admite valores enteros entre 128 y 4096 píxeles. Para regresar al
+tamaño original de 1140 × 520 puedes usar:
+
+```javascript
+welcome.setResolution('default', 'default');
+```
+
+Por defecto, el avatar, el título y la descripción forman una columna centrada
+horizontal y verticalmente. El tamaño del avatar y de los textos se adapta cuando
+la resolución es pequeña. Si necesitas coordenadas personalizadas puedes activar
+el modo manual directamente o proporcionar `x`/`y` en cualquiera de los elementos:
+
+```javascript
+welcome.setLayout('manual');
+
+// Para regresar a la distribución automática:
+welcome.setLayout('center');
+```
+
+## Desarrollo
+
+```sh
+pnpm install
+pnpm run check
+pnpm run pack:check
+```
+
+`pnpm run check` ejecuta las pruebas funcionales locales y comprueba las
+declaraciones TypeScript. Ninguna de estas pruebas consulta la API remota.
 <hr>
 <center>
 <p>Resultado esperado</p>
