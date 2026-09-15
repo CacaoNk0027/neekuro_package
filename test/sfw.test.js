@@ -184,6 +184,41 @@ test('SFW rechaza respuestas vacías o elementos sin URL', async t => {
     await assert.rejects(() => SFW.getGif('action', 'hug'), /InvalidResponse/);
 });
 
+test('los valores de anime sin dato se muestran como Desconocido', async t => {
+    prepare(t);
+    global.fetch = async () => response([
+        { url: 'https://cdn.example/a.gif', anime: 'Unknown' },
+        { url: 'https://cdn.example/b.gif', anime: '  unknown ' },
+        { url: 'https://cdn.example/c.gif', anime: '' },
+        { url: 'https://cdn.example/d.gif' },
+        { url: 'https://cdn.example/e.gif', anime: 'Serie' }
+    ]);
+
+    const animes = (await SFW.getGifs('action', 'hug')).map(gif => gif.getAnime());
+    assert.deepEqual(animes, ['Desconocido', 'Desconocido', 'Desconocido', 'Desconocido', 'Serie']);
+});
+
+test('las URL repetidas se descartan y no salen dos veces seguidas', async t => {
+    prepare(t);
+    global.fetch = async () => response([
+        { url: 'https://cdn.example/a.gif', anime: 'A' },
+        { url: 'https://cdn.example/b.gif', anime: 'B' },
+        { url: 'https://cdn.example/a.gif', anime: 'A repetido' }
+    ]);
+    // Con la lista sin depurar, esta secuencia elige la posición 0 y luego la 2,
+    // que es la misma URL.
+    const values = [0, 0.99];
+    Math.random = () => values.shift() ?? 0;
+
+    const gifs = await SFW.getGifs('action', 'hug');
+    assert.deepEqual(gifs.map(gif => gif.getUrl()), ['https://cdn.example/a.gif', 'https://cdn.example/b.gif']);
+    assert.equal(gifs[0].getAnime(), 'A');
+
+    const first = await SFW.getGif('action', 'hug');
+    const second = await SFW.getGif('action', 'hug');
+    assert.notEqual(first.getUrl(), second.getUrl());
+});
+
 test('la configuración rechaza URL insegura y TTL inválido', t => {
     prepare(t);
     assert.throws(() => SFW.setBaseURL('http://example.com'), /HTTPS/);

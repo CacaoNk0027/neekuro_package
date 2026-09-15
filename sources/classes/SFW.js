@@ -174,8 +174,14 @@ async function requestGifList(category, gif, token) {
         throw new NekoError('EmptyResponse', `La API no devolvió GIF para ${category}/${gif}`);
     }
 
-    return response.data.map((item, index) => normalizeGif(item, category, gif, index));
+    const items = response.data.map((item, index) => normalizeGif(item, category, gif, index));
+    return removeDuplicateURLs(items);
 }
+
+const UNKNOWN_ANIME = 'Desconocido';
+// Valores que la base de datos usa para "sin dato". Se tratan igual que un
+// campo vacío para no mostrar, por ejemplo, "Unknown" en un embed en español.
+const PLACEHOLDER_ANIME = new Set(['unknown', 'desconocido']);
 
 /**
  * @param {unknown} item
@@ -189,11 +195,26 @@ function normalizeGif(item, category, gif, index) {
         throw new NekoError('InvalidResponse', `El GIF ${index} de ${category}/${gif} no contiene una URL válida`);
     }
 
+    const anime = typeof item.anime === 'string' ? item.anime.trim() : '';
     return Object.freeze({
         url: item.url.trim(),
-        anime: typeof item.anime === 'string' && item.anime.trim()
-            ? item.anime.trim()
-            : 'Desconocido'
+        anime: anime && !PLACEHOLDER_ANIME.has(anime.toLowerCase()) ? anime : UNKNOWN_ANIME
+    });
+}
+
+/**
+ * Conserva la primera aparición de cada URL. Una URL repetida pesa doble en el
+ * sorteo y puede salir dos veces seguidas, porque la selección evita repetir
+ * posiciones, no URLs.
+ * @param {GifData[]} items
+ * @returns {GifData[]}
+ */
+function removeDuplicateURLs(items) {
+    const seen = new Set();
+    return items.filter(item => {
+        if (seen.has(item.url)) return false;
+        seen.add(item.url);
+        return true;
     });
 }
 
