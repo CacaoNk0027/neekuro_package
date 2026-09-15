@@ -99,8 +99,8 @@ class Welcome {
 
     /**
      * Establece la resolución de la imagen de bienvenida
-     * @param {number|'default'} width - Ancho en píxeles o 'default' para 1024px
-     * @param {number|'default'} height - Alto en píxeles o 'default' para 450px
+     * @param {number|'default'} width - Ancho en píxeles o 'default' para 1140px
+     * @param {number|'default'} height - Alto en píxeles o 'default' para 520px
      * @returns {Welcome} 
      * @throws {NekoError} Si los parámetros son inválidos
      * @example

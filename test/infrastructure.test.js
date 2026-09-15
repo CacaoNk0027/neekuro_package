@@ -6,7 +6,9 @@ const Canvas = require('canvas');
 
 const neekuro = require('..');
 const {
+    IMAGE_TIMEOUT_MS,
     isPrivateAddress,
+    loadImageSource,
     parseRemoteURL,
     validateImageBuffer
 } = require('../sources/utils/imageLoader.js');
@@ -105,9 +107,34 @@ test('User permite establecer el token en constructor o posteriormente', () => {
     assert.throws(() => new neekuro.User('   '), /requerido/);
 });
 
-test('APIClient rechaza configuraciones inseguras antes de hacer solicitudes', () => {
+test('APIClient rechaza configuraciones inseguras antes de hacer solicitudes', async () => {
     assert.throws(() => new neekuro.APIClient('http://example.com', { token: 'x' }), /HTTPS/);
     assert.throws(() => new neekuro.APIClient('https://example.com', { token: '' }), /token/);
     const client = new neekuro.APIClient('https://example.com/', { token: 'x' });
-    assert.rejects(() => client.get('sin-barra'), /comenzar con/);
+    await assert.rejects(() => client.get('sin-barra'), /comenzar con/);
+});
+
+test('el timeout de descarga también se aplica mientras se lee el cuerpo', async t => {
+    const originalFetch = global.fetch;
+    t.after(() => { global.fetch = originalFetch; });
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+
+    let markReading;
+    const reading = new Promise(resolve => { markReading = resolve; });
+    // Cuerpo que nunca termina: solo se interrumpe cuando se aborta la señal.
+    global.fetch = async (url, { signal }) => new Response(new ReadableStream({
+        start(controller) {
+            signal.addEventListener('abort', () => controller.error(signal.reason));
+        },
+        pull() {
+            markReading();
+            return new Promise(() => {});
+        }
+    }, { highWaterMark: 0 }), { status: 200, headers: { 'content-type': 'image/png' } });
+
+    const download = loadImageSource('https://1.1.1.1/avatar.png', 'el avatar');
+    await reading;
+    t.mock.timers.tick(IMAGE_TIMEOUT_MS);
+
+    await assert.rejects(download, /excedió/);
 });

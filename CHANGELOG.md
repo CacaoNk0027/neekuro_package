@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.3.0] - 15-09-2026
+
+### Added
+- Nuevas subcategorías de `action`: `handhold`, `highfive`, `read` y `wave`.
+- Nuevas subcategorías de `reaction`: `disgust`, `facepalm`, `happy`, `love`, `nervous`, `shrug` y `surprised`.
+
+### Fixed
+- El timeout de 10 segundos de las imágenes remotas ahora también cubre la lectura del cuerpo, no solo las cabeceras.
+- Las respuestas descartadas (redirecciones, errores HTTP o formatos inválidos) liberan su conexión.
+- El User-Agent de descarga de imágenes refleja la versión real del paquete.
+- Declaraciones TypeScript: `APIError.determineMessage` es estático, se añade `APIError.fromNetworkError` y se corrige la resolución por defecto documentada (1140 × 520) y el ejemplo de `User.token()`.
+- `SFW` muestra `Desconocido` cuando el anime llega como `Unknown`, no solo cuando viene vacío.
+- `SFW` descarta las URL repetidas de una subcategoría: pesaban doble en el sorteo y podían salir dos veces seguidas.
+
+### Compatibility
+- Solo se añaden subcategorías; las existentes no cambian.
+
 ## [2.2.0] - 28-08-2026
 
 ### Added

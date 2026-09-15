@@ -4,7 +4,9 @@ const dns = require('node:dns').promises;
 const net = require('node:net');
 const Canvas = require('canvas');
 const NekoError = require('../classes/errors/Error.js');
+const { version } = require('../../package.json');
 
+const USER_AGENT = `neekuro/${version} image-loader`;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const IMAGE_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 3;
@@ -25,43 +27,48 @@ async function downloadImage(source, label = 'imagen') {
         await assertPublicHostname(currentURL.hostname, label);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), IMAGE_TIMEOUT_MS);
-        let response;
+        // El timeout cubre tanto las cabeceras como la lectura completa del cuerpo.
         try {
-            response = await fetch(currentURL, {
+            const response = await fetch(currentURL, {
                 redirect: 'manual',
                 signal: controller.signal,
-                headers: { 'User-Agent': 'neekuro/2.1 image-loader' }
+                headers: { 'User-Agent': USER_AGENT }
             });
+
+            if (response.status >= 300 && response.status < 400) {
+                await discardBody(response);
+                const location = response.headers.get('location');
+                if (!location || redirects === MAX_REDIRECTS) {
+                    throw new NekoError('ImageDownloadError', `Demasiadas redirecciones al descargar ${label}`);
+                }
+                currentURL = parseRemoteURL(new URL(location, currentURL).href, label);
+                continue;
+            }
+            if (!response.ok) {
+                await discardBody(response);
+                throw new NekoError('ImageDownloadError', `No se pudo descargar ${label}: HTTP ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type')?.split(';', 1)[0].toLowerCase();
+            if (!contentType || !IMAGE_CONTENT_TYPES.has(contentType)) {
+                await discardBody(response);
+                throw new NekoError('ImageFormatError', `${label} no tiene un formato de imagen compatible`);
+            }
+            const declaredLength = Number(response.headers.get('content-length'));
+            if (Number.isFinite(declaredLength) && declaredLength > MAX_IMAGE_BYTES) {
+                await discardBody(response);
+                throw new NekoError('ImageSizeError', `${label} supera el límite de 10 MB`);
+            }
+            return await readLimitedBody(response, label);
         } catch (error) {
-            const message = error?.name === 'AbortError'
+            if (error instanceof NekoError) throw error;
+            const message = controller.signal.aborted
                 ? `La descarga de ${label} excedió ${IMAGE_TIMEOUT_MS} ms`
                 : `No se pudo descargar ${label}: ${error?.message ?? 'error desconocido'}`;
             throw new NekoError('ImageDownloadError', message);
         } finally {
             clearTimeout(timeoutId);
         }
-
-        if (response.status >= 300 && response.status < 400) {
-            const location = response.headers.get('location');
-            if (!location || redirects === MAX_REDIRECTS) {
-                throw new NekoError('ImageDownloadError', `Demasiadas redirecciones al descargar ${label}`);
-            }
-            currentURL = parseRemoteURL(new URL(location, currentURL).href, label);
-            continue;
-        }
-        if (!response.ok) {
-            throw new NekoError('ImageDownloadError', `No se pudo descargar ${label}: HTTP ${response.status}`);
-        }
-
-        const contentType = response.headers.get('content-type')?.split(';', 1)[0].toLowerCase();
-        if (!contentType || !IMAGE_CONTENT_TYPES.has(contentType)) {
-            throw new NekoError('ImageFormatError', `${label} no tiene un formato de imagen compatible`);
-        }
-        const declaredLength = Number(response.headers.get('content-length'));
-        if (Number.isFinite(declaredLength) && declaredLength > MAX_IMAGE_BYTES) {
-            throw new NekoError('ImageSizeError', `${label} supera el límite de 10 MB`);
-        }
-        return readLimitedBody(response, label);
     }
     throw new NekoError('ImageDownloadError', `No se pudo descargar ${label}`);
 }
@@ -110,6 +117,11 @@ function isPrivateAddress(address) {
             (value.startsWith('::ffff:') && isPrivateAddress(value.slice(7)));
     }
     return true;
+}
+
+/** Libera la conexión cuando la respuesta no se va a leer. */
+async function discardBody(response) {
+    await response.body?.cancel().catch(() => undefined);
 }
 
 async function readLimitedBody(response, label) {

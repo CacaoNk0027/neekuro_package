@@ -20,6 +20,10 @@ const client = new APIClient('https://example.com', { token: 'token' });
 void client.get('/endpoint', { timeout: 5_000 });
 void SFW.getGif('action', 'hug');
 void SFW.getGifs('reaction', 'angry');
+void SFW.getGif('action', 'highfive');
+void SFW.getGif('reaction', 'facepalm');
+// @ts-expect-error las subcategorías no se mezclan entre categorías
+void SFW.getGif('action', 'happy');
 SFW.clearCache('action', 'hug');
 SFW.clearCache('reaction');
 SFW.clearCache();

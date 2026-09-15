@@ -49,6 +49,8 @@ export type ActionGifs =
     'eat' |
     'explosion' |
     'feed' |
+    'handhold' |
+    'highfive' |
     'hug' |
     'kickbut' |
     'kill' |
@@ -59,6 +61,7 @@ export type ActionGifs =
     'playing' |
     'poke' |
     'punch' |
+    'read' |
     'run' |
     'sape' |
     'shoot' |
@@ -68,6 +71,7 @@ export type ActionGifs =
     'stare' |
     'tickle' |
     'travel' |
+    'wave' |
     'work';
 
 export type ReactionGifs = 'angry' |
@@ -76,11 +80,18 @@ export type ReactionGifs = 'angry' |
     'confused' |
     'cry' |
     'dance' |
+    'disgust' |
+    'facepalm' |
+    'happy' |
     'laugh' |
     'like' |
+    'love' |
+    'nervous' |
     'pout' |
     'scream' |
+    'shrug' |
     'smug' |
+    'surprised' |
     'think' |
     'vomit' |
     'wink';
@@ -198,8 +209,8 @@ export class Welcome {
 
     /**
      * Establece la resolución de la imagen de bienvenida
-     * @param width Ancho en píxeles o 'default' para 1024px
-     * @param height Alto en píxeles o 'default' para 450px
+     * @param width Ancho en píxeles o 'default' para 1140px
+     * @param height Alto en píxeles o 'default' para 520px
      * @throws {NekoError} Si los parámetros son inválidos
      */
     setResolution(width: number | 'default', height: number | 'default'): this;
@@ -264,8 +275,8 @@ export class Welcome {
  * let user = new User('token')
  */
 export class User {
+    #private;
     private token_: string | undefined;
-    private getToken(): string;
 
     /**
      * puedes establecer el token a partir de aqui, pero recomiendo usar el metodo dedicado
@@ -276,9 +287,9 @@ export class User {
      * establece el token para usar la api
      * @example 
      * // no tan recomendada (token expuesto)
-     * user.setToken('mf3a***'); 
-     * // recomendada (token oculto)
-     * user.setToken(process.env['NeeKuroToken']); 
+     * user.token('mf3a***');
+     * // recomendada (token fuera del código fuente)
+     * user.token(process.env['NeeKuroToken']);
      */
     public token(token: string): void;
 }
@@ -378,7 +389,15 @@ export class APIError extends Error {
      * @param response respuesta de la api
      * @returns Mensaje de error
      */
-    private determineMessage(response: ApiResponse): string;
+    static determineMessage(response?: ApiResponse): string;
+
+    /**
+     * Crea un error para fallos de red o timeout (código 503)
+     * @param endpoint ruta solicitada
+     * @param url URL completa de la solicitud
+     * @param message descripción del fallo
+     */
+    static fromNetworkError(endpoint: string, url: string, message: string): APIError;
 
     /**
      * Instanciamiento de un error de api 
