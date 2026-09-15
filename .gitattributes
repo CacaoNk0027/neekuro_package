@@ -1,0 +1,18 @@
+# Final de linea unificado en LF.
+#
+# La carpeta c:\Compartido se sincroniza con Syncthing entre equipos Windows
+# y Linux. Syncthing compara bytes: si cada equipo escribe el arbol de trabajo
+# con un final de linea distinto, todos los archivos difieren y aparecen
+# copias .sync-conflict. Con LF en todos los equipos los bytes coinciden.
+#
+# Requiere ademas core.autocrlf=false en cada equipo Windows.
+
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
