@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { NekoGif, SFW, User } = require('..');
 
-const OFFICIAL_BASE_URL = 'https://www.nexatdc.work.gd/api/sfw';
+const OFFICIAL_BASE_URL = 'https://maplebot.fyi/api/sfw';
 const TEST_BASE_URL = 'https://api.example.test/sfw';
 const DEFAULT_CACHE_TTL = 5 * 60 * 1000;
 

@@ -12,7 +12,7 @@ const NekoError = require('./errors/Error.js');
 const NekoGif = require('./package/NekoGif.js');
 const { getToken, getTokenVersion } = require('./user/BaseUser.js');
 
-const DEFAULT_BASE_URL = 'https://www.nexatdc.work.gd/api/sfw';
+const DEFAULT_BASE_URL = 'https://maplebot.fyi/api/sfw';
 const DEFAULT_CACHE_TTL = 5 * 60 * 1000;
 const MAX_CACHE_ENTRIES = 100;
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.1] - 07-10-2026
+
+### Fixed
+- La URL por defecto del API pasa a `https://maplebot.fyi/api/sfw`. El dominio anterior dejo de resolver, asi que las versiones previas no podian obtener ninguna imagen.
+
+### Compatibility
+- No cambia ninguna firma. Quien ya fijaba su endpoint con `SFW.setBaseURL()` no se ve afectado.
+
 ## [2.3.0] - 15-09-2026
 
 ### Added
